@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dental Analysis Result</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Dental Analysis Result</h1>
+
+        <div class="images">
+            <div class="image-card">
+                <h3>Original Image</h3>
+                <img src="{{ url_for('static', filename=original_image) }}" alt="Original Image">
+            </div>
+
+            <div class="image-card">
+                <h3>Finding Viewer</h3>
+                {% if single_detection_images and single_detection_images|length > 0 %}
+                    <img
+                        id="viewer-image"
+                        src="{{ url_for('static', filename=single_detection_images[0]) }}"
+                        alt="Detection Viewer"
+                    >
+                {% else %}
+                    <img
+                        id="viewer-image"
+                        src="{{ url_for('static', filename=predicted_all_image) }}"
+                        alt="Predicted Image"
+                    >
+                {% endif %}
+            </div>
+        </div>
+
+        {% if detections %}
+        <div class="report-box">
+            <h3>Explore Findings</h3>
+
+            <p><strong>Finding:</strong> <span id="finding-type"></span></p>
+            <p><strong>Confidence:</strong> <span id="finding-confidence"></span></p>
+            <p><strong>Region:</strong> <span id="finding-region"></span></p>
+            <p><strong>Current:</strong> <span id="finding-index"></span></p>
+
+            <div style="margin-top: 16px;">
+                <button type="button" onclick="prevDetection()">Previous</button>
+                <button type="button" onclick="nextDetection()">Next</button>
+            </div>
+        </div>
+        {% endif %}
+
+        {% if findings_summary %}
+        <div class="report-box">
+            <h3>Detection Summary</h3>
+            <ul>
+                {% for class_name, count in findings_summary.items() %}
+                    {% if count > 0 %}
+                        <li><strong>{{ class_name }}:</strong> {{ count }}</li>
+                    {% endif %}
+                {% endfor %}
+            </ul>
+        </div>
+        {% endif %}
+
+        {% if detections %}
+        <div class="report-box">
+            <h3>Detected Findings</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Finding</th>
+                        <th>Confidence</th>
+                        <th>Region</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in detections %}
+                    <tr>
+                        <td>{{ item.class_name }}</td>
+                        <td>{{ item.confidence }}</td>
+                        <td>{{ item.region }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% endif %}
+
+        {% if report %}
+        <div class="report-box">
+            <h3>AI Report</h3>
+
+            {% if report.status %}
+                <p><strong>Status:</strong> {{ report.status }}</p>
+            {% endif %}
+
+            {% if report.attention_level %}
+                <p><strong>Attention Level:</strong></p>
+                <span class="status-badge status-{{ report.attention_level|lower }}">
+                    {{ report.attention_level }}
+                </span>
+            {% endif %}
+
+            {% if report.summary %}
+                <p style="margin-top: 16px;">{{ report.summary }}</p>
+            {% endif %}
+        </div>
+        {% endif %}
+
+        <a href="{{ url_for('index') }}">Try Another Image</a>
+    </div>
+
+    <script>
+        const detections = JSON.parse('{{ detections | tojson | safe }}');
+        const singleImages = JSON.parse('{{ single_detection_images | tojson | safe }}');
+        let currentIndex = 0;
+
+        function showDetection(index) {
+            if (!detections || detections.length === 0) {
+                return;
+            }
+
+            const d = detections[index];
+
+            document.getElementById("finding-type").innerText = d.class_name;
+            document.getElementById("finding-confidence").innerText = d.confidence;
+            document.getElementById("finding-region").innerText = d.region;
+            document.getElementById("finding-index").innerText = `${index + 1} / ${detections.length}`;
+
+            if (singleImages && singleImages.length > index) {
+                const viewerImage = document.getElementById("viewer-image");
+                viewerImage.src = "{{ url_for('static', filename='') }}" + singleImages[index];
+            }
+        }
+
+        function nextDetection() {
+            if (currentIndex < detections.length - 1) {
+                currentIndex++;
+                showDetection(currentIndex);
+            }
+        }
+
+        function prevDetection() {
+            if (currentIndex > 0) {
+                currentIndex--;
+                showDetection(currentIndex);
+            }
+        }
+
+        showDetection(currentIndex);
+    </script>
+</body>
+</html>

@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dental AI Analyzer</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Dental Image Analysis</h1>
+        <p>Upload a dental X-ray image to detect dental findings using AI.</p>
+
+        {% if error %}
+            <div class="error-box">
+                <p>{{ error }}</p>
+            </div>
+        {% endif %}
+
+        <form method="POST" enctype="multipart/form-data" class="upload-form">
+
+            <label for="image" class="file-label">Choose a dental image</label>
+
+            <input 
+                type="file" 
+                id="image" 
+                name="image" 
+                accept=".png,.jpg,.jpeg" 
+                required
+            >
+
+            <button type="submit">Analyze Image</button>
+
+            <!-- 👇 إضافة بسيطة -->
+            <p class="note">
+                Supported formats: JPG, JPEG, PNG
+            </p>
+
+        </form>
+    </div>
+</body>
+</html>
