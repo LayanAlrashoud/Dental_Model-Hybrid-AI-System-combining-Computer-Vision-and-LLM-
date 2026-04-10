@@ -1,76 +1,129 @@
-# Dental AI Analyzer
+# 🦷 Dental AI Analyzer
 
-An AI-powered web application for preliminary dental X-ray analysis.  
-The system allows users to upload a dental image, detects visible dental findings using a YOLO-based model, and generates a concise AI-written report in plain English.
+An AI-powered web application for dental X-ray analysis that combines **Computer Vision (YOLOv8 Segmentation)** and **Large Language Models (LLMs)** to detect dental findings and generate a professional preliminary report.
 
-## Overview
+---
 
-This project combines computer vision and large language models to support dental image analysis in a simple web interface.
+## 🚀 Overview
 
-The workflow is:
+This project provides an end-to-end AI system that:
 
-1. The user uploads a dental X-ray image.
-2. A YOLO model analyzes the image and detects dental findings.
-3. Duplicate overlapping detections are filtered using IoU-based deduplication.
-4. The system summarizes detected findings.
-5. An LLM generates a short, professional preliminary report.
-6. The user can review:
-   - the original image
-   - detected findings one by one
-   - a detection summary
-   - AI-generated status and attention level
+1. Accepts a dental X-ray image from the user  
+2. Detects dental findings using a YOLOv8 segmentation model  
+3. Filters duplicate detections using IoU-based post-processing  
+4. Summarizes detected findings  
+5. Classifies overall case status and attention level  
+6. Generates a concise AI-powered dental report  
 
-## Features
+The system simulates a real-world intelligent assistant for dental image interpretation.
 
-- Upload dental X-ray images through a Flask web interface
-- Detect dental findings using a YOLO model
-- Remove duplicate detections with IoU filtering
-- Show all findings and also allow browsing each finding individually
-- Classify the overall case into a general status
-- Estimate an attention level: Low / Medium / High
-- Generate a concise AI-written dental summary
-- Display findings, confidence scores, and image region information
+---
 
-## Supported Findings
+## ✨ Features
 
-The system is currently designed to summarize the following classes:
+- Upload dental X-ray images  
+- Detect multiple dental conditions using YOLOv8-seg  
+- Remove duplicate detections (IoU filtering)  
+- Interactive viewer (browse findings one-by-one)  
+- Detection summary + table  
+- AI-generated dental report  
+- Case classification:
+  - Status
+  - Attention Level (Low / Medium / High)
 
-- Caries
-- Filling
-- Crown
-- Implant
-- Periapical lesion
-- Retained root
-- Root canal filling
+---
 
-## Tech Stack
+## 🧠 AI Components
 
-- **Backend:** Flask
-- **Computer Vision:** Ultralytics YOLO
-- **Image Processing:** OpenCV
-- **LLM Report Generation:** OpenAI API
-- **Frontend:** HTML, CSS, JavaScript, Jinja2 templates
+### 1. Computer Vision (YOLOv8-seg)
 
-## Project Structure
+- Model: YOLOv8m-seg  
+- Performs both:
+  - **Bounding Box detection (location)**
+  - **Segmentation (precise shape)**
+- Filters low-confidence predictions  
+- Applies IoU-based deduplication  
 
-```bash
-project/
-│
-├── app.py
-├── config.py
-├── uploads/
-├── outputs/
-│   ├── original/
-│   └── predicted/
-│
-├── services/
-│   ├── yolo_service.py
-│   ├── report_service.py
-│   └── prompt_builder.py
-│
-├── templates/
-│   ├── index.html
-│   └── result.html
-│
-└── static/
-    └── css/
+---
+
+### 2. LLM (Report Generator)
+
+- Converts structured detections into natural language  
+- Generates:
+  - Summary  
+  - Interpretation  
+  - Recommendations  
+- Output is:
+  - Clear  
+  - Concise  
+  - Professional  
+
+---
+
+## 📊 Dataset
+
+### Source
+
+- Platform: Roboflow  
+- Workspace: layans-workspace  
+- Project: denim-dh8es  
+- Version: 2  
+
+---
+
+### Data Statistics
+
+#### Training Set
+- Images: **4,500**
+- Objects (annotations): **31,438**
+
+#### Validation Set
+- Images: **327**
+- Objects: **2,323**
+
+#### Test Set
+- Images: **566**
+- Objects: **3,974**
+
+#### Removed During Cleaning
+- Train: 3,000 images  
+- Validation: 611 images  
+- Test: 371 images  
+
+---
+
+### Classes
+
+- Caries  
+- Filling  
+- Crown  
+- Implant  
+- Periapical lesion  
+- Retained root  
+- Root canal filling  
+
+---
+
+### Annotation Details
+
+Each object represents a dental finding and consists of:
+
+- A class label  
+- A bounding box  
+- A segmentation mask  
+
+If an image contains multiple findings, each is counted separately.
+
+---
+
+### Preprocessing
+
+- Removed low-quality images  
+- Cleaned incorrect annotations  
+- Merged similar classes  
+- Converted to YOLO format  
+- Ensured consistency across dataset splits  
+
+---
+
+
